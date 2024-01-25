@@ -1,0 +1,98 @@
+{
+  "name": "remix-cache",
+  "version": "1.0.0",
+  "description": "Utility library to cache your client data in Remix.run",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": {
+        "import": "./dist/index.js",
+        "default": "./dist/index.js",
+        "types": "./dist/index.d.ts"
+      },
+      "require": {
+        "import": "./dist/index.cjs",
+        "require": "./dist/index.cjs",
+        "default": "./dist/index.cjs",
+        "types": "./dist/index.d.cts"
+      },
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "typings": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "workspaces": [
+    "src/testing-app",
+    "."
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "remix-dev": "npm run dev -w src/testing-app",
+    "build:dev": "tsup src/index.ts --format cjs,esm --dts",
+    "build:dev:watch": "npm run build:dev -- --watch",
+    "dev": "npm-run-all -s build:dev -p remix-dev build:dev:watch",
+    "vite": "npm run build --watch -m development",
+    "prepublishOnly": "npm run build",
+    "test": "vitest run",
+    "tsc": "tsc",
+    "validate": "npm run lint && npm run tsc && npm run test",
+    "lint": "eslint \"src/**/*.+(ts|tsx)\"",
+    "lint:fix": "npm run lint -- --fix",
+    "prettier": "prettier app --check",
+    "prettier:fix": "prettier app --write",
+    "format-code": "npm run prettier:fix & npm run lint:fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Code-Forge-Net/remix-cache.git"
+  },
+  "keywords": [
+    "React",
+    "Remix",
+    "Remix.run",
+    "hooks",
+    "cache",
+    "client-cache"
+  ],
+  "author": "Alem Tuzlak",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Code-Forge-Net/remix-cache/issues"
+  },
+  "homepage": "https://github.com/Code-Forge-Net/remix-cache#readme",
+  "peerDependencies": {
+    "@remix-run/react": "^2.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "readme": "https://github.com/Code-Forge-Net/remix-cache#readme",
+  "devDependencies": {
+    "@remix-run/server-runtime": "^2.5.1",
+    "@remix-run/react": "^2.5.1",
+    "@testing-library/react": "^14.0.0",
+    "@types/node": "^18.15.11",
+    "@types/react": "^18.0.34",
+    "@vitest/coverage-c8": "^0.30.1",
+    "babel-eslint": "^10.1.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "happy-dom": "^9.5.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.49.3",
+    "remix-development-tools": "^3.1.1",
+    "rollup": "^3.20.2",
+    "rollup-plugin-typescript2": "^0.34.1",
+    "tsup": "^7.2.0",
+    "typescript": "^5.0.4",
+    "vite": "^5.0.11",
+    "vitest": "^0.30.1",
+    "zod": "^3.21.4"
+  }
+}
