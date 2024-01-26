@@ -6,6 +6,8 @@
 ![npm](https://img.shields.io/npm/dy/remix-cache?style=plastic) 
 ![GitHub top language](https://img.shields.io/github/languages/top/Code-Forge-Net/remix-cache?style=plastic) 
 
+<img style="display: block; margin: 0 auto;" src="./assets/remix-cache.png" height="300px" align="middle" />
+
 remix-cache is a powerful and lightweight library made for Remix.run to cache your server loader data on the client using clientLoaders.
 
 By default it uses the stale while revalidate strategy and hot swaps your stale info once loaded from the server. It also allows you to invalidate the cache for a specific key or multiple keys.
