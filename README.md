@@ -14,7 +14,7 @@ It allows you to pass in an adapter of your choice to cache your data.
 
 It comes with a default adapter that uses in memory storage to cache your data.
 
-First party support for localStorage, sessionStorage and localforage packages. You can just provide them as the argument to `configureCache`.
+First party support for localStorage, sessionStorage and localforage packages. You can just provide them as the argument to `configureGlobalCache`.
 
 ## Install
 
@@ -28,10 +28,7 @@ Here is an example usage of remix-cache with the default in memory adapter.
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { ClientLoaderFunctionArgs } from "@remix-run/react";
 
-import {
-  cacheClientLoader,
-  useCachedLoaderData,
-} from "~/hook/useCachedLoaderData";
+import { cacheClientLoader, useCachedLoaderData } from "remix-cache";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const response = await fetch(
@@ -43,8 +40,8 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 };
 
 
-// Caches the loader data into memory
-export const clientLoader = (args: ClientLoaderFunctionArgs) => cacheClientLoader(args, "swr");
+// Caches the loader data on the client
+export const clientLoader = (args: ClientLoaderFunctionArgs) => cacheClientLoader(args);
   
 // make sure you turn this flag on
 clientLoader.hydrate = true;
@@ -76,17 +73,68 @@ It closely matches the interface of `Storage` and requires you to have the follo
 - `setItem`: takes a key and a value and returns a promise that resolves when the value is stored
 - `removeItem`: takes a key and returns a promise that resolves when the value is removed
 
-The `cacheLoaderData` will use your provided adapter automatically and cache the data using the methods from above. Make sure that the adapter you provide implements the `CacheAdapter` interface.
+The `cacheLoaderData` will use the default memory cache adapter that comes with the library. If you want an advanced use-case make sure that the adapter you provide implements the `CacheAdapter` interface.
 
-Here are some examples of how you can use the library with different adapters.
+You can use the `configureGlobalCache` function to override the libraries default in-memory cache adapter. It will globally switch to whatever adapter you provide to it.
+
+If you want to have a per route adapter you can use the `createCacheAdapter` to create an adapter and provide it to your hooks and functions.
 
 ```ts
-configureCache(() => localStorage); // uses localStorage as the cache adapter
-cofigureCache(() => sessionStorage); // uses sessionStorage as the cache adapter
-configureCache(() => localforage); // uses localforage as the cache adapter
+
+import { createCacheAdapter, useCachedLoaderData } from "remix-cache";
+
+const { adapter } = createCacheAdapter(() => localStorage); // uses localStorage as the cache adapter
+
+
+// Caches the loader data on the client
+export const clientLoader = (args: ClientLoaderFunctionArgs) => cacheClientLoader(args, { 
+  // We pass our custom adapter to the clientLoader
+  adapter
+});
+  
+// make sure you turn this flag on
+clientLoader.hydrate = true;
+
+export default function Index() {
+  const { user } = useCachedLoaderData<typeof loader>({ 
+    // We use the adapter returned by the createCacheAdapter function
+    adapter
+  });
+
+  return (
+    <div>
+      {user.name} <hr /> {user.email}
+      <hr />
+      {user.username}
+      <hr />
+      {user.website} <hr />
+      {user.description} 
+    </div>
+  );
+}
+
+
 ```
 
-Let's say you want to use a custom adapter that uses a database to store the data. You can do that by implementing the `CacheAdapter` interface and passing it to the `configureCache` function.
+Here are some examples of how you can use the library with different global adapters.
+
+```ts
+configureGlobalCache(() => localStorage); // uses localStorage as the cache adapter
+configureGlobalCache(() => sessionStorage); // uses sessionStorage as the cache adapter
+configureGlobalCache(() => localforage); // uses localforage as the cache adapter
+```
+
+Also with different per route adapters:
+
+```ts
+const { adapter } = createCacheAdapter(() => localStorage); // uses localStorage as the cache adapter
+const { adapter } = createCacheAdapter(() => sessionStorage); // uses sessionStorage as the cache adapter
+const { adapter } = createCacheAdapter(() => localforage); // uses localforage as the cache adapter
+```
+
+Let's say you want to use a custom adapter that uses a database to store the data. 
+
+You can do that by implementing the `CacheAdapter` interface and passing it to the `configureGlobalCache` or `createCacheAdapter` function.
 
 ```ts
 class DatabaseAdapter implements CacheAdapter {
@@ -103,21 +151,44 @@ class DatabaseAdapter implements CacheAdapter {
   }
 }
 
-configureCache(() => new DatabaseAdapter()); // uses your custom adapter as the cache adapter
+configureGlobalCache(() => new DatabaseAdapter()); // uses your custom adapter as the cache adapter globally
+const { adapter } = createCacheAdapter(() => new DatabaseAdapter()); // uses your custom adapter as the cache adapter per route
 ```
  
 
 ## API's
 
+### createCacheAdapter
+
+Function that creates a cache adapter and returns it. It takes one argument, the `adapter` that is used to store the data. 
+
+```ts
+import { createCacheAdapter } from "remix-cache";
+
+const { adapter } = createCacheAdapter(() => localStorage); // uses localStorage as the cache adapter
+```
+
+### configureGlobalCache
+
+Function that configures the global cache adapter. It takes one argument, the `adapter` that is used to store the data. 
+
+```ts
+import { configureGlobalCache } from "remix-cache";
+
+configureGlobalCache(() => localStorage); // uses localStorage as the cache adapter
+```
+
+
 ### cacheClientLoader
 
-Used to cache the data that is piped from the loader to your component using the `clientLoader` export. It takes three arguments, the first one is the `ClientLoaderFunctionArgs` object that is passed to the `clientLoader` function, the second one is the `type` that tells the client loader if it should
-use the normal caching mechanism where it stores the data and early returns that instead of refetching or if it should use the `staleWhileRevalidate` mechanism where it returns the cached data and refetches in the background. The third argument is the `key` that is used to store the data in the cache.
+Used to cache the data that is piped from the loader to your component using the `clientLoader` export. 
 
-By default the `type` is set to `swr` and the `key` is set to `the current route path (eg. /user/1)`. If you want to use the `normal` mechanism you need to set the `type` to `normal`.
+It takes two arguments, the first one is the `ClientLoaderFunctionArgs` object that is passed to the `clientLoader` function, the second one is an object with the following properties:
 
-By default the `key` is set to the current route path. If you want to use a different key you can pass it as the third argument. The key will also add
-search params and hashes to the key if they are present in the `url`.
+- `type` - that tells the client loader if it should use the normal caching mechanism where it stores the data and early returns that instead of refetching or if it should use the `staleWhileRevalidate` mechanism where it returns the cached data and refetches in the background. 
+- `key` - key that is used to store the data in the cache. Defaults to the current route path including search params and hashes. (eg. /user/1?name=John#profile)
+- `adapter` - the cache adapter that is used to store the data. Defaults to the in memory adapter that comes with the library.
+ 
 
 ```tsx
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
@@ -133,7 +204,11 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   return json({ user: { ...user, description: Math.random() } });
 };
 
-export const clientLoader = (args: ClientLoaderFunctionArgs) => cacheClientLoader(args, "swr");
+export const clientLoader = (args: ClientLoaderFunctionArgs) => cacheClientLoader(args, {
+  type: "swr", // default is swr, can also be set to normal
+  key: "/user/1" // default is the current route path including search params and hashes
+  adapter: () => localStorage // default is the in memory adapter, can be anything your wish
+});
 clientLoader.hydrate = true;
 
 ```
@@ -141,7 +216,7 @@ clientLoader.hydrate = true;
 
 ### useCachedLoaderData
 
-Hook that can be used to get the cached data from the `clientLoader` export. Must be used together with `cacheClientLoader`. Because the data returned from
+Hook that can be used to get the cached data from the `clientLoader` export. Must be used together with `cacheClientLoader`  because the data returned from
 the `cacheClientLoader` is augmented to work with `useCachedLoaderData` in mind and not the standard `useLoaderData` hook.
 
 ```tsx
@@ -168,6 +243,8 @@ export default function Index() {
 }
 ```
 
+Accepts an optional object with the following properties:
+- `adapter` - the cache adapter that is used to store the data. Defaults to the in memory adapter that comes with the library.
  
  ### invalidateCache
 

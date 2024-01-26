@@ -16,25 +16,43 @@ export let cache: CacheAdapter = {
   removeItem: async (key) => map.delete(key),
 };
 
-export const configureCache = (
+const augmentStorageAdapter = (storage: Storage) => {
+  return {
+    getItem: async (key: string) => {
+      try {
+        const item = JSON.parse(storage.getItem(key) || "");
+
+        return item;
+      } catch (e) {
+        return storage.getItem(key);
+      }
+    },
+    setItem: async (key: string, val: any) =>
+      storage.setItem(key, JSON.stringify(val)),
+    removeItem: async (key: string) => storage.removeItem(key),
+  };
+};
+
+export const createCacheAdapter = (adapter: () => CacheAdapter) => {
+  if (typeof document === "undefined") return { adapter: undefined };
+  const adapterInstance = adapter();
+  if (adapterInstance instanceof Storage) {
+    return {
+      adapter: augmentStorageAdapter(adapterInstance),
+    };
+  }
+  return {
+    adapter: adapter(),
+  };
+};
+
+export const configureGlobalCache = (
   newCacheInstance: () => CacheAdapter | Storage,
 ) => {
   if (typeof document === "undefined") return;
   const newCache = newCacheInstance();
   if (newCache instanceof Storage) {
-    cache = {
-      getItem: async (key) => {
-        try {
-          const item = JSON.parse(newCache.getItem(key) || "");
-
-          return item;
-        } catch (e) {
-          return newCache.getItem(key);
-        }
-      },
-      setItem: async (key, val) => newCache.setItem(key, JSON.stringify(val)),
-      removeItem: async (key) => newCache.removeItem(key),
-    };
+    cache = augmentStorageAdapter(newCache);
     return;
   }
   if (newCache) {
@@ -42,23 +60,46 @@ export const configureCache = (
   }
 };
 
-export function useCachedLoaderData<T extends any>() {
+export const cacheClientLoader = async (
+  { request, serverLoader }: ClientLoaderFunctionArgs,
+  {
+    type = "swr",
+    key = constructKey(request),
+    adapter = cache,
+  }: { type?: "swr" | "normal"; key?: string; adapter?: CacheAdapter } = {
+    type: "swr",
+    key: constructKey(request),
+    adapter: cache,
+  },
+) => {
+  const existingData = await adapter.getItem(key);
+
+  if (type === "normal" && existingData) {
+    return { data: existingData, deferredData: undefined, key };
+  }
+  const data = existingData ? existingData : await serverLoader();
+
+  await adapter.setItem(key, data);
+  const deferredData = existingData ? serverLoader() : undefined;
+  return { data, deferredData, key };
+};
+
+export function useCachedLoaderData<T extends any>(
+  { adapter = cache }: { adapter?: CacheAdapter } = { adapter: cache },
+) {
   const loaderData = useLoaderData<any>();
   const [freshData, setFreshData] = useState<any>({
     ...("data" in loaderData ? loaderData.data : loaderData),
   });
+
   // Unpack deferred data from the server
   useEffect(() => {
     let isMounted = true;
-    if ("deferedData" in loaderData) {
-      loaderData.deferedData.then((newData: any) => {
-        if (
-          isMounted &&
-          JSON.stringify(newData) !== JSON.stringify(freshData)
-        ) {
-          cache.setItem(loaderData.key, newData).then(() => {
-            setFreshData(newData);
-          });
+    if (loaderData.deferredData) {
+      loaderData.deferredData.then((newData: any) => {
+        if (isMounted) {
+          adapter.setItem(loaderData.key, newData);
+          setFreshData(newData);
         }
       });
     }
@@ -66,6 +107,7 @@ export function useCachedLoaderData<T extends any>() {
       isMounted = false;
     };
   }, [loaderData]);
+
   // Update the cache if the data changes
   useEffect(() => {
     if (
@@ -75,27 +117,20 @@ export function useCachedLoaderData<T extends any>() {
       setFreshData(loaderData.data);
     }
   }, [loaderData?.data]);
-  return { ...freshData, cacheKey: loaderData.key } as SerializeFrom<T> & {
+
+  return {
+    ...freshData,
+    cacheKey: loaderData.key,
+    invalidate: () => invalidateCache(loaderData.key),
+  } as SerializeFrom<T> & {
     cacheKey?: string;
+    invalidate: () => Promise<void>;
   };
 }
 
-export const cacheClientLoader = async (
-  { request, serverLoader }: ClientLoaderFunctionArgs,
-  type: "swr" | "normal" = "swr",
-  key = new URL(request.url).pathname +
-    new URL(request.url).search +
-    new URL(request.url).hash,
-) => {
-  const existingData = await cache.getItem(key);
-
-  if (type === "normal" && existingData) {
-    return existingData;
-  }
-  const data = existingData ? existingData : await serverLoader();
-  await cache.setItem(key, data);
-  const deferedData = serverLoader();
-  return { data, deferedData, key };
+const constructKey = (request: Request) => {
+  const url = new URL(request.url);
+  return url.pathname + url.search + url.hash;
 };
 
 export const invalidateCache = async (key: string | string[]) => {

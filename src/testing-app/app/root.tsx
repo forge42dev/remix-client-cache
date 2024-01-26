@@ -1,5 +1,3 @@
-import { cssBundleHref } from "@remix-run/css-bundle";
-import type { LinksFunction } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -8,19 +6,17 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-import css from "remix-development-tools/index.css";
-import { withDevTools } from "remix-development-tools";
-export const links: LinksFunction = () => [
-  ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
-  ...(css ? [{ rel: "stylesheet", href: css }] : []),
-];
+import { configureCache } from "./hook/useCachedLoaderData";
+import localforage from "localforage";
 
-function App() {
+configureCache(() => localStorage);
+
+export default function App() {
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
@@ -33,4 +29,3 @@ function App() {
     </html>
   );
 }
-export default withDevTools(App);
