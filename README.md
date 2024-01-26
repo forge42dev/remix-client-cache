@@ -75,6 +75,28 @@ It closely matches the interface of `Storage` and requires you to have the follo
 
 The `cacheLoaderData` will use the default memory cache adapter that comes with the library. If you want an advanced use-case make sure that the adapter you provide implements the `CacheAdapter` interface.
 
+```ts
+// Inside your entry.client.tsx file 
+import { RemixBrowser } from "@remix-run/react";
+import { startTransition, StrictMode } from "react";
+import { hydrateRoot } from "react-dom/client";
+
+import { configureGlobalCache } from "remix-cache";
+
+// You can use the configureGlobalCache function to override the libraries default in-memory cache adapter
+configureGlobalCache(() => localStorage); // uses localStorage as the cache adapter
+
+startTransition(() => {
+  hydrateRoot(
+    document,
+    <StrictMode>
+      <RemixBrowser />
+    </StrictMode>
+  );
+});
+
+```
+
 You can use the `configureGlobalCache` function to override the libraries default in-memory cache adapter. It will globally switch to whatever adapter you provide to it.
 
 If you want to have a per route adapter you can use the `createCacheAdapter` to create an adapter and provide it to your hooks and functions.
