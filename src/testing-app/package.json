@@ -1,5 +1,4 @@
 {
-  "name": "remix-client-cache",
   "private": true,
   "sideEffects": false,
   "type": "module",
