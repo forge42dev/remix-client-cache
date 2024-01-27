@@ -1,14 +1,14 @@
-# remix-cache
+# remix-client-cache
 
 ![GitHub Repo stars](https://img.shields.io/github/stars/Code-Forge-Net/remix-cache?style=social)
-![npm](https://img.shields.io/npm/v/remix-cache?style=plastic)
+![npm](https://img.shields.io/npm/v/remix-client-cache?style=plastic)
 ![GitHub](https://img.shields.io/github/license/Code-Forge-Net/remix-cache?style=plastic)
-![npm](https://img.shields.io/npm/dy/remix-cache?style=plastic) 
+![npm](https://img.shields.io/npm/dy/remix-client-cache?style=plastic) 
 ![GitHub top language](https://img.shields.io/github/languages/top/Code-Forge-Net/remix-cache?style=plastic) 
 
 <img style="display: block; margin: 0 auto;" src="./assets/remix-cache.png" height="300px" align="middle" />
 
-remix-cache is a powerful and lightweight library made for Remix.run to cache your server loader data on the client using clientLoaders.
+remix-client-cache is a powerful and lightweight library made for Remix.run to cache your server loader data on the client using clientLoaders.
 
 By default it uses the stale while revalidate strategy and hot swaps your stale info once loaded from the server. It also allows you to invalidate the cache for a specific key or multiple keys.
 
@@ -20,17 +20,17 @@ First party support for localStorage, sessionStorage and localforage packages. Y
 
 ## Install
 
-    npm install remix-cache
+    npm install remix-client-cache
 
 ## Basic usage
 
-Here is an example usage of remix-cache with the default in memory adapter.
+Here is an example usage of remix-client-cache with the default in memory adapter.
 
 ```tsx
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { ClientLoaderFunctionArgs } from "@remix-run/react";
 
-import { cacheClientLoader, useCachedLoaderData } from "remix-cache";
+import { cacheClientLoader, useCachedLoaderData } from "remix-client-cache";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const response = await fetch(
@@ -83,7 +83,7 @@ import { RemixBrowser } from "@remix-run/react";
 import { startTransition, StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
 
-import { configureGlobalCache } from "remix-cache";
+import { configureGlobalCache } from "remix-client-cache";
 
 // You can use the configureGlobalCache function to override the libraries default in-memory cache adapter
 configureGlobalCache(() => localStorage); // uses localStorage as the cache adapter
@@ -105,7 +105,7 @@ If you want to have a per route adapter you can use the `createCacheAdapter` to 
 
 ```ts
 
-import { createCacheAdapter, useCachedLoaderData } from "remix-cache";
+import { createCacheAdapter, useCachedLoaderData } from "remix-client-cache";
 
 const { adapter } = createCacheAdapter(() => localStorage); // uses localStorage as the cache adapter
 
@@ -187,7 +187,7 @@ const { adapter } = createCacheAdapter(() => new DatabaseAdapter()); // uses you
 Function that creates a cache adapter and returns it. It takes one argument, the `adapter` that is used to store the data. 
 
 ```ts
-import { createCacheAdapter } from "remix-cache";
+import { createCacheAdapter } from "remix-client-cache";
 
 const { adapter } = createCacheAdapter(() => localStorage); // uses localStorage as the cache adapter
 ```
@@ -197,7 +197,7 @@ const { adapter } = createCacheAdapter(() => localStorage); // uses localStorage
 Function that configures the global cache adapter. It takes one argument, the `adapter` that is used to store the data. 
 
 ```ts
-import { configureGlobalCache } from "remix-cache";
+import { configureGlobalCache } from "remix-client-cache";
 
 configureGlobalCache(() => localStorage); // uses localStorage as the cache adapter
 ```
@@ -217,7 +217,7 @@ It takes two arguments, the first one is the `ClientLoaderFunctionArgs` object t
 ```tsx
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { ClientLoaderFunctionArgs } from "@remix-run/react"; 
-import { cacheClientLoader, useCachedLoaderData } from "remix-cache";
+import { cacheClientLoader, useCachedLoaderData } from "remix-client-cache";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const response = await fetch(
@@ -244,7 +244,7 @@ Hook that can be used to get the cached data from the `clientLoader` export. Mus
 the `cacheClientLoader` is augmented to work with `useCachedLoaderData` in mind and not the standard `useLoaderData` hook.
 
 ```tsx
-import { useCachedLoaderData } from "remix-cache";
+import { useCachedLoaderData } from "remix-client-cache";
 
 // Must be used together with cacheClientLoader
 export const clientLoader = (args: ClientLoaderFunctionArgs) => cacheClientLoader(args, "swr");
@@ -277,7 +277,7 @@ Accepts an optional object with the following properties:
 Hook used to get an SWR component that hot swaps the data for you. It takes one argument, loaderData returned by the `useCachedLoaderData` OR `useLoaderData` hook. 
 
 ```tsx
-import { useCachedLoaderData, useSwrData } from "remix-cache";
+import { useCachedLoaderData, useSwrData } from "remix-client-cache";
 
 export const clientLoader = (args: ClientLoaderFunctionArgs) => cacheClientLoader(args);
 clientLoader.hydrate = true;
@@ -314,7 +314,7 @@ Utility function that can be used to invalidate the cache for a specific key. It
 Can also be an array of keys
 
 ```ts
-import { invalidateCache } from "remix-cache";
+import { invalidateCache } from "remix-client-cache";
 
 invalidateCache("/user/1"); // invalidates the cache for the /user/1 route
 ```
@@ -326,7 +326,7 @@ Keep in mind this can only be used on the client, so either in `clientLoader` or
 Hook that returns a function that can be used to invalidate the cache for a specific key. It takes one argument, the `key` that is used to store the data in the cache. Can also be an array of keys
 
 ```tsx
-import { useCacheInvalidator } from "remix-cache";
+import { useCacheInvalidator } from "remix-client-cache";
 
 export default function Index() {
   const { invalidateCache } = useCacheInvalidator(); 
@@ -351,16 +351,16 @@ MIT
 
 ## Bugs
 
-If you find a bug, please file an issue on [our issue tracker on GitHub](https://github.com/Code-Forge-Net/remix-cache/issues)
+If you find a bug, please file an issue on [our issue tracker on GitHub](https://github.com/Code-Forge-Net/remix-client-cache/issues)
 
 
 ## Contributing
 
-Thank you for considering contributing to remix-cache! We welcome any contributions, big or small, including bug reports, feature requests, documentation improvements, or code changes.
+Thank you for considering contributing to remix-client-cache! We welcome any contributions, big or small, including bug reports, feature requests, documentation improvements, or code changes.
 
 To get started, please fork this repository and make your changes in a new branch. Once you're ready to submit your changes, please open a pull request with a clear description of your changes and any related issues or pull requests.
 
-Please note that all contributions are subject to our [Code of Conduct](https://github.com/Code-Forge-Net/remix-cache/blob/main/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
+Please note that all contributions are subject to our [Code of Conduct](https://github.com/Code-Forge-Net/remix-client-cache/blob/main/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
 
-We appreciate your time and effort in contributing to remix-cache and helping to make it a better tool for the community!
+We appreciate your time and effort in contributing to remix-client-cache and helping to make it a better tool for the community!
 

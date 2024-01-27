@@ -10,7 +10,7 @@ import {
   createCacheAdapter,
   useCachedLoaderData,
   useSwrData,
-} from "remix-cache";
+} from "remix-client-cache";
 
 const { adapter } = createCacheAdapter(() => localStorage);
 

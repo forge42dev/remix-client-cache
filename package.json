@@ -1,5 +1,5 @@
 {
-  "name": "remix-cache",
+  "name": "remix-client-cache",
   "version": "1.0.0",
   "description": "Utility library to cache your client data in Remix.run",
   "type": "module",
@@ -48,7 +48,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Code-Forge-Net/remix-cache.git"
+    "url": "git+https://github.com/Code-Forge-Net/remix-client-cache.git"
   },
   "keywords": [
     "React",
@@ -61,15 +61,15 @@
   "author": "Alem Tuzlak",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Code-Forge-Net/remix-cache/issues"
+    "url": "https://github.com/Code-Forge-Net/remix-client-cache/issues"
   },
-  "homepage": "https://github.com/Code-Forge-Net/remix-cache#readme",
+  "homepage": "https://github.com/Code-Forge-Net/remix-client-cache#readme",
   "peerDependencies": {
     "@remix-run/react": "^2.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
-  "readme": "https://github.com/Code-Forge-Net/remix-cache#readme",
+  "readme": "https://github.com/Code-Forge-Net/remix-client-cache#readme",
   "devDependencies": {
     "@remix-run/react": "^2.5.1",
     "@remix-run/server-runtime": "^2.5.1",

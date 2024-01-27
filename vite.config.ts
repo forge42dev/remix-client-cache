@@ -31,7 +31,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
-      name: "remix-cache",
+      name: "remix-client-cache",
       fileName: "index",
     },
     rollupOptions: {
