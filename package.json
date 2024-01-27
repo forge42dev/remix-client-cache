@@ -1,6 +1,6 @@
 {
   "name": "remix-client-cache",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Utility library to cache your client data in Remix.run",
   "type": "module",
   "main": "./dist/index.cjs",
