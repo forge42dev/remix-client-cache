@@ -265,12 +265,50 @@ export default function Index() {
     </div>
   );
 }
-```
+``` 
 
 Accepts an optional object with the following properties:
 - `adapter` - the cache adapter that is used to store the data. Defaults to the in memory adapter that comes with the library.
  
- ### invalidateCache
+
+ 
+### useSwrData
+
+Hook used to get an SWR component that hot swaps the data for you. It takes one argument, loaderData returned by the `useCachedLoaderData` OR `useLoaderData` hook. 
+
+```tsx
+import { useCachedLoaderData, useSwrData } from "remix-cache";
+
+export const clientLoader = (args: ClientLoaderFunctionArgs) => cacheClientLoader(args);
+clientLoader.hydrate = true;
+
+export default function Index() {
+  // We do not destructure the data so we can pass in the object into the useSwrData hook
+  const loaderData = useLoaderData<typeof loader>(); 
+  // You can also use useCachedLoaderData hook with the useSwrData hook
+  const loaderData = useCachedLoaderData<typeof loader>(); 
+  // Pass the loader data into the hook and the component will handle everything else for you
+  const SWR = useSwrData(loaderData);
+
+  return (
+    <SWR>
+      {/** Hot swapped automatically */}
+      {({ user }) => (
+        <div>
+          {data.name} <hr /> {data.email}
+          <hr />
+          {data.username}
+          <hr />
+          {data.website} <hr />
+          {data.description} 
+        </div>
+      )}
+    </SWR>
+  );
+}
+```
+
+### invalidateCache
 
 Utility function that can be used to invalidate the cache for a specific key. It takes one argument, the `key` that is used to store the data in the cache. 
 Can also be an array of keys

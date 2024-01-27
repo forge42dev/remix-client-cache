@@ -30,9 +30,9 @@
     "."
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "build": "tsup src/index.tsx --format cjs,esm --dts --clean",
     "remix-dev": "npm run dev -w src/testing-app",
-    "build:dev": "tsup src/index.ts --format cjs,esm --dts",
+    "build:dev": "tsup src/index.tsx --format cjs,esm --dts",
     "build:dev:watch": "npm run build:dev -- --watch",
     "dev": "npm-run-all -s build:dev -p remix-dev build:dev:watch",
     "vite": "npm run build --watch -m development",
@@ -71,11 +71,12 @@
   },
   "readme": "https://github.com/Code-Forge-Net/remix-cache#readme",
   "devDependencies": {
-    "@remix-run/server-runtime": "^2.5.1",
     "@remix-run/react": "^2.5.1",
+    "@remix-run/server-runtime": "^2.5.1",
     "@testing-library/react": "^14.0.0",
     "@types/node": "^18.15.11",
     "@types/react": "^18.0.34",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@vitest/coverage-c8": "^0.30.1",
     "babel-eslint": "^10.1.0",
     "eslint-config-prettier": "^9.0.0",

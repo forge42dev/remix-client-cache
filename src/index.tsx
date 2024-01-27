@@ -1,6 +1,11 @@
 import type { SerializeFrom } from "@remix-run/server-runtime";
-import { ClientLoaderFunctionArgs, useLoaderData } from "@remix-run/react";
+import {
+  Await,
+  ClientLoaderFunctionArgs,
+  useLoaderData,
+} from "@remix-run/react";
 import { useEffect, useState } from "react";
+import React from "react";
 
 const map = new Map();
 
@@ -60,7 +65,7 @@ export const configureGlobalCache = (
   }
 };
 
-export const cacheClientLoader = async (
+export const cacheClientLoader = async <T extends unknown>(
   { request, serverLoader }: ClientLoaderFunctionArgs,
   {
     type = "swr",
@@ -71,17 +76,33 @@ export const cacheClientLoader = async (
     key: constructKey(request),
     adapter: cache,
   },
-) => {
+): Promise<
+  SerializeFrom<T> & {
+    serverData: SerializeFrom<T>;
+    deferredServerData: Promise<SerializeFrom<T>> | undefined;
+    key: string;
+  }
+> => {
   const existingData = await adapter.getItem(key);
 
   if (type === "normal" && existingData) {
-    return { data: existingData, deferredData: undefined, key };
+    return {
+      ...existingData,
+      serverData: existingData as SerializeFrom<T>,
+      deferredServerData: undefined,
+      key,
+    };
   }
   const data = existingData ? existingData : await serverLoader();
 
   await adapter.setItem(key, data);
-  const deferredData = existingData ? serverLoader() : undefined;
-  return { data, deferredData, key };
+  const deferredServerData = existingData ? serverLoader() : undefined;
+  return {
+    ...(data ?? existingData),
+    serverData: data as SerializeFrom<T>,
+    deferredServerData,
+    key,
+  };
 };
 
 export function useCachedLoaderData<T extends any>(
@@ -89,14 +110,14 @@ export function useCachedLoaderData<T extends any>(
 ) {
   const loaderData = useLoaderData<any>();
   const [freshData, setFreshData] = useState<any>({
-    ...("data" in loaderData ? loaderData.data : loaderData),
+    ...("serverData" in loaderData ? loaderData.serverData : loaderData),
   });
 
   // Unpack deferred data from the server
   useEffect(() => {
     let isMounted = true;
-    if (loaderData.deferredData) {
-      loaderData.deferredData.then((newData: any) => {
+    if (loaderData.deferredServerData) {
+      loaderData.deferredServerData.then((newData: any) => {
         if (isMounted) {
           adapter.setItem(loaderData.key, newData);
           setFreshData(newData);
@@ -111,14 +132,15 @@ export function useCachedLoaderData<T extends any>(
   // Update the cache if the data changes
   useEffect(() => {
     if (
-      loaderData.data &&
-      JSON.stringify(loaderData.data) !== JSON.stringify(freshData)
+      loaderData.serverData &&
+      JSON.stringify(loaderData.serverData) !== JSON.stringify(freshData)
     ) {
-      setFreshData(loaderData.data);
+      setFreshData(loaderData.serverData);
     }
-  }, [loaderData?.data]);
+  }, [loaderData?.serverData]);
 
   return {
+    ...loaderData,
     ...freshData,
     cacheKey: loaderData.key,
     invalidate: () => invalidateCache(loaderData.key),
@@ -143,3 +165,27 @@ export const invalidateCache = async (key: string | string[]) => {
 export const useCacheInvalidator = () => ({
   invalidateCache,
 });
+
+export function useSwrData<T>({
+  serverData,
+  deferredServerData,
+  ...args
+}: any) {
+  return function SWR({
+    children,
+  }: {
+    children: (data: SerializeFrom<T>) => React.ReactElement;
+  }) {
+    return (
+      <>
+        {deferredServerData ? (
+          <React.Suspense fallback={children(serverData)}>
+            <Await resolve={deferredServerData}>{children as any}</Await>
+          </React.Suspense>
+        ) : (
+          children(serverData ?? (args as T))
+        )}
+      </>
+    );
+  };
+}
