@@ -10,16 +10,16 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@remix-run/node": "^2.5.1",
-    "@remix-run/react": "^2.5.1",
-    "@remix-run/serve": "^2.5.1",
+    "@remix-run/node": "^2.6.0",
+    "@remix-run/react": "^2.6.0",
+    "@remix-run/serve": "^2.6.0",
     "isbot": "^4.1.0",
     "localforage": "^1.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@remix-run/dev": "^2.5.1",
+    "@remix-run/dev": "^2.6.0",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
