@@ -237,6 +237,36 @@ clientLoader.hydrate = true;
 
 ```
 
+### decacheClientLoader
+
+Used to remove the data that is piped from the loader to your component using the `clientLoader` export. 
+
+```tsx
+import { json, type LoaderFunctionArgs } from "@remix-run/node";
+import { ClientLoaderFunctionArgs } from "@remix-run/react"; 
+import { decacheClientLoader, useCachedLoaderData } from "remix-client-cache";
+
+export const loader = async ({ params }: LoaderFunctionArgs) => {
+  const response = await fetch(
+    `https://jsonplaceholder.typicode.com/users/${params.user}`
+  );
+  const user = await response.json();
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  return json({ user: { ...user, description: Math.random() } });
+};
+// The data is cached here
+export const clientLoader = (args: ClientLoaderFunctionArgs) => cacheClientLoader;
+clientLoader.hydrate = true;
+// It is de-cached after a successful action submission via the clientAction export
+export const clientAction = decacheClientLoader;
+
+```
+
+Accepts an optional object with the following properties:
+- `key` - key that is used to store the data in the cache.
+- `adapter` - the cache adapter that is used to store the data.
+
+
 
 ### useCachedLoaderData
 
