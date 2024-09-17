@@ -1,6 +1,7 @@
 import type { SerializeFrom } from "@remix-run/server-runtime";
 import {
   Await,
+  ClientActionFunctionArgs,
   ClientLoaderFunctionArgs,
   useLoaderData,
 } from "@remix-run/react";
@@ -63,6 +64,18 @@ export const configureGlobalCache = (
   if (newCache) {
     cache = newCache;
   }
+};
+
+export const decacheClientLoader = async <T extends unknown>(
+  { request, serverAction }: ClientActionFunctionArgs,
+  {
+    key = constructKey(request),
+    adapter = cache,
+  }: { key?: string; adapter?: CacheAdapter },
+) => {
+  const data = await serverAction<T>();
+  await adapter.removeItem(key);
+  return data;
 };
 
 export const cacheClientLoader = async <T extends unknown>(

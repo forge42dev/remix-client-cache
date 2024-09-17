@@ -4,6 +4,7 @@ import {
   cacheClientLoader,
   useCachedLoaderData,
 } from "~/hook/useCachedLoaderData";
+import { decacheClientLoader } from "remix-client-cache";
 
 export const meta: MetaFunction = () => {
   return [
@@ -21,6 +22,8 @@ export const loader = async () => {
 export const clientLoader = async (args: ClientLoaderFunctionArgs) =>
   cacheClientLoader(args, "swr");
 clientLoader.hydrate = true;
+
+export const clientAction = decacheClientLoader;
 
 export default function Index() {
   const { user } = useCachedLoaderData<typeof loader>();
