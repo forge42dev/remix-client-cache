@@ -262,6 +262,12 @@ export const clientAction = decacheClientLoader;
 
 ```
 
+Accepts an optional object with the following properties:
+- `key` - key that is used to store the data in the cache.
+- `adapter` - the cache adapter that is used to store the data.
+
+
+
 ### useCachedLoaderData
 
 Hook that can be used to get the cached data from the `clientLoader` export. Must be used together with `cacheClientLoader`  because the data returned from
