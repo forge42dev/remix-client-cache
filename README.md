@@ -4,6 +4,7 @@
 ![npm](https://img.shields.io/npm/v/remix-client-cache?style=plastic)
 ![GitHub](https://img.shields.io/github/license/Code-Forge-Net/remix-client-cache?style=plastic)
 ![npm](https://img.shields.io/npm/dy/remix-client-cache?style=plastic) 
+![npm](https://img.shields.io/npm/dm/remix-client-cache?style=plastic) 
 ![GitHub top language](https://img.shields.io/github/languages/top/Code-Forge-Net/remix-client-cache?style=plastic) 
 
 <img style="display: block; margin: 0 auto;" src="./assets/remix-cache.png" height="300px" align="middle" />
