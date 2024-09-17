@@ -4,6 +4,7 @@ import {
   ClientActionFunctionArgs,
   ClientLoaderFunctionArgs,
   useLoaderData,
+  useNavigate,
 } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import React from "react";
@@ -122,6 +123,7 @@ export function useCachedLoaderData<T extends any>(
   { adapter = cache }: { adapter?: CacheAdapter } = { adapter: cache },
 ) {
   const loaderData = useLoaderData<any>();
+  const navigate = useNavigate();
   const [freshData, setFreshData] = useState<any>({
     ...("serverData" in loaderData ? loaderData.serverData : loaderData),
   });
@@ -130,12 +132,22 @@ export function useCachedLoaderData<T extends any>(
   useEffect(() => {
     let isMounted = true;
     if (loaderData.deferredServerData) {
-      loaderData.deferredServerData.then((newData: any) => {
-        if (isMounted) {
-          adapter.setItem(loaderData.key, newData);
-          setFreshData(newData);
-        }
-      });
+      loaderData.deferredServerData
+        .then((newData: any) => {
+          if (isMounted) {
+            adapter.setItem(loaderData.key, newData);
+            setFreshData(newData);
+          }
+        })
+        .catch((e: any) => {
+          const res = e instanceof Response ? e : undefined;
+          if (res && res.status === 302) {
+            const to = res.headers.get("Location");
+            to && navigate(to);
+          } else {
+            throw e;
+          }
+        });
     }
     return () => {
       isMounted = false;
