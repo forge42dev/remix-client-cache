@@ -1,10 +1,16 @@
 import type { MetaFunction } from "@remix-run/node";
-import { ClientLoaderFunctionArgs, json, useNavigate } from "@remix-run/react";
 import {
+  ClientLoaderFunctionArgs,
+  json,
+  redirect,
+  useNavigate,
+} from "@remix-run/react";
+
+import {
+  decacheClientLoader,
   cacheClientLoader,
   useCachedLoaderData,
-} from "~/hook/useCachedLoaderData";
-import { decacheClientLoader } from "remix-client-cache";
+} from "remix-client-cache";
 
 export const meta: MetaFunction = () => {
   return [
@@ -16,11 +22,11 @@ export const meta: MetaFunction = () => {
 export const loader = async () => {
   const response = await fetch("https://jsonplaceholder.typicode.com/users/2");
   const user = await response.json();
+  // return redirect("/user/2");
   return json({ user: { ...user, description: Math.random() } });
 };
 
-export const clientLoader = async (args: ClientLoaderFunctionArgs) =>
-  cacheClientLoader(args, "swr");
+export const clientLoader = cacheClientLoader;
 clientLoader.hydrate = true;
 
 export const clientAction = decacheClientLoader;

@@ -1,6 +1,7 @@
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import {
   ClientLoaderFunctionArgs,
+  Link,
   useLoaderData,
   useNavigate,
 } from "@remix-run/react";
@@ -42,6 +43,7 @@ export default function Index() {
 
   return (
     <div>
+      <Link to="/">Home</Link>
       <SWR>
         {(data) => {
           return (
