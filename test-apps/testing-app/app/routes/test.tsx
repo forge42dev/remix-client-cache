@@ -1,17 +1,17 @@
 import type {
+  ActionFunctionArgs,
   HeadersFunction,
   LinksFunction,
   LoaderFunctionArgs,
-  ActionFunctionArgs,
-} from "@remix-run/node";
+} from "react-router";
 import {
-  MetaFunction,
-  useLoaderData,
+  type MetaFunction,
   isRouteErrorResponse,
-  useRouteError,
+  useLoaderData,
   useNavigate,
-} from "@remix-run/react";
-import type { ShouldRevalidateFunction } from "@remix-run/react";
+  useRouteError,
+} from "react-router";
+import type { ShouldRevalidateFunction } from "react-router";
 
 export const links: LinksFunction = () => [
   // your links here
