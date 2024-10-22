@@ -9,6 +9,12 @@
 
 <img style="display: block; margin: 0 auto;" src="./assets/remix-cache.png" height="300px" align="middle" />
 
+# Important information
+
+This library is now a part of the React Router ecosystem and runs on top of React Router. It should be compatible with remix.run but if you're having issues version
+1.1.0 is the last version that will work with remix.run.
+
+
 remix-client-cache is a powerful and lightweight library made for Remix.run to cache your server loader data on the client using clientLoaders.
 
 By default it uses the stale while revalidate strategy and hot swaps your stale info once loaded from the server. It also allows you to invalidate the cache for a specific key or multiple keys.

@@ -1,13 +1,13 @@
 import type { SerializeFrom } from "@remix-run/server-runtime";
-import {
-  Await,
-  ClientActionFunctionArgs,
-  ClientLoaderFunctionArgs,
-  useLoaderData,
-  useNavigate,
-} from "@remix-run/react";
 import { useEffect, useState } from "react";
 import React from "react";
+import {
+  Await,
+  type ClientActionFunctionArgs,
+  type ClientLoaderFunctionArgs,
+  useLoaderData,
+  useNavigate,
+} from "react-router";
 
 const map = new Map();
 
@@ -67,7 +67,7 @@ export const configureGlobalCache = (
   }
 };
 
-export const decacheClientLoader = async <T extends unknown>(
+export const decacheClientLoader = async <T,>(
   { request, serverAction }: ClientActionFunctionArgs,
   {
     key = constructKey(request),
@@ -79,7 +79,7 @@ export const decacheClientLoader = async <T extends unknown>(
   return data;
 };
 
-export const cacheClientLoader = async <T extends unknown>(
+export const cacheClientLoader = async <T,>(
   { request, serverLoader }: ClientLoaderFunctionArgs,
   {
     type = "swr",
@@ -119,10 +119,10 @@ export const cacheClientLoader = async <T extends unknown>(
   };
 };
 
-export function useCachedLoaderData<T extends any>(
+export function useCachedLoaderData<T>(
   { adapter = cache }: { adapter?: CacheAdapter } = { adapter: cache },
 ) {
-  const loaderData = useLoaderData<any>();
+  const loaderData = useLoaderData() as any;
   const navigate = useNavigate();
   const [freshData, setFreshData] = useState<any>({
     ...("serverData" in loaderData ? loaderData.serverData : loaderData),

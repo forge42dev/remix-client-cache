@@ -15,7 +15,7 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "esnext",
     ] /* Specify a set of bundled library declaration files that describe the target runtime environment. */,
     "jsx": "react" /* Specify what JSX code is generated. */,
     // "experimentalDecorators": true,                   /* Enable experimental support for TC39 stage 2 draft decorators. */
@@ -35,7 +35,7 @@
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
     // "typeRoots": [],                                  /* Specify multiple folders that act like `./node_modules/@types`. */
     "types": [
-      "vitest/globals"
+      "vitest/globals",
     ] /* Specify type package names to be included without being referenced in a source file. */,
     // "allowUmdGlobalAccess": true,                     /* Allow accessing UMD globals from modules. */
     // "resolveJsonModule": true,                        /* Enable importing .json files */
@@ -101,13 +101,13 @@
 
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
-    "skipLibCheck": true /* Skip type checking all .d.ts files. */
+    "skipLibCheck": true /* Skip type checking all .d.ts files. */,
   },
   "exclude": [
     "./bin/**/*.test.ts",
     "./dist/**/*",
     "./bin/mocks/**/*",
     "./*.config.ts",
-    "./src/testing-app/**"
-  ]
+    "testing-app/**",
+  ],
 }
