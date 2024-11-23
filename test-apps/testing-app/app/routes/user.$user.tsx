@@ -1,10 +1,10 @@
-import { json, type LoaderFunctionArgs } from "@remix-run/node";
+import { type LoaderFunctionArgs, json } from "react-router";
 import {
-  ClientLoaderFunctionArgs,
+  type ClientLoaderFunctionArgs,
   Link,
   useLoaderData,
   useNavigate,
-} from "@remix-run/react";
+} from "react-router";
 
 import {
   cacheClientLoader,

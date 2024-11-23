@@ -1,15 +1,8 @@
-import {
-  Links,
-  LiveReload,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from "@remix-run/react";
-import { configureCache } from "./hook/useCachedLoaderData";
 import localforage from "localforage";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import { configureGlobalCache } from "remix-client-cache";
 
-configureCache(() => localStorage);
+configureGlobalCache(() => localStorage);
 
 export default function App() {
   return (
