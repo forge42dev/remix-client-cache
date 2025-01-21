@@ -7,6 +7,7 @@ import {
 import type { MetaFunction } from "react-router";
 import {
   cacheClientLoader,
+  createClientLoaderCache,
   decacheClientLoader,
   useCachedLoaderData,
 } from "remix-client-cache";
@@ -25,7 +26,7 @@ export const loader = async () => {
   return { user: { description: Math.random() } };
 };
 
-export const clientLoader = cacheClientLoader;
+export const clientLoader = createClientLoaderCache();
 clientLoader.hydrate = true;
 
 export const clientAction = decacheClientLoader;
