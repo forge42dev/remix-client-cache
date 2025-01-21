@@ -1,6 +1,6 @@
 {
   "name": "remix-client-cache",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Utility library to cache your client data in React Router",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -65,15 +65,15 @@
   },
   "homepage": "https://github.com/forge42dev/remix-client-cache#readme",
   "peerDependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router": "^7.0.0-pre.0"
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0",
+    "react-router": "^7.0.0"
   },
   "readme": "https://github.com/forge42dev/remix-client-cache#readme",
   "devDependencies": {
-    "@remix-run/server-runtime": "^2.13.1",
     "@testing-library/react": "^14.0.0",
     "@types/node": "^18.15.11",
+    "@remix-run/server-runtime": "^2.13.1",
     "@types/react": "^18.0.34",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@vitest/coverage-c8": "^0.30.1",
@@ -86,7 +86,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.49.3",
-    "remix-development-tools": "^3.1.1",
+    "react-router": "^7.0.1",
     "rollup": "^3.20.2",
     "rollup-plugin-typescript2": "^0.34.1",
     "tsup": "^7.2.0",

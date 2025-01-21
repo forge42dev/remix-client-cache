@@ -1,11 +1,10 @@
 import {
   ClientLoaderFunctionArgs,
-  json,
+  data,
   redirect,
   useNavigate,
 } from "react-router";
 import type { MetaFunction } from "react-router";
-
 import {
   cacheClientLoader,
   decacheClientLoader,
@@ -23,7 +22,7 @@ export const loader = async () => {
   const response = await fetch("https://jsonplaceholder.typicode.com/users/2");
   const user = await response.json();
   // return redirect("/user/2");
-  return json({ user: { ...user, description: Math.random() } });
+  return { user: { description: Math.random() } };
 };
 
 export const clientLoader = cacheClientLoader;

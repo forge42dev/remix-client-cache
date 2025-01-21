@@ -1,4 +1,4 @@
-import { type LoaderFunctionArgs, json } from "react-router";
+import { type LoaderFunctionArgs, data } from "react-router";
 import {
   type ClientLoaderFunctionArgs,
   Link,
@@ -21,7 +21,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   );
   const user = await response.json();
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  return json({ user: { ...user, description: Math.random() } });
+  return data({ user: { ...user, description: Math.random() } });
 };
 
 // Caches the loader data into memory
