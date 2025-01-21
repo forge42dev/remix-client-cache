@@ -79,13 +79,19 @@ export const decacheClientLoader = async <T,>(
   return data;
 };
 
+type CacheClientLoaderArgs = {
+  type?: "swr" | "normal";
+  key?: string;
+  adapter?: CacheAdapter;
+};
+
 export const cacheClientLoader = async <T,>(
   { request, serverLoader }: ClientLoaderFunctionArgs,
   {
     type = "swr",
     key = constructKey(request),
     adapter = cache,
-  }: { type?: "swr" | "normal"; key?: string; adapter?: CacheAdapter } = {
+  }: CacheClientLoaderArgs = {
     type: "swr",
     key: constructKey(request),
     adapter: cache,
@@ -117,6 +123,13 @@ export const cacheClientLoader = async <T,>(
     deferredServerData,
     key,
   };
+};
+
+export const createClientLoaderCache = (props?: CacheClientLoaderArgs) => {
+  const clientLoader = (args: ClientLoaderFunctionArgs) =>
+    cacheClientLoader(args, props);
+  clientLoader.hydrate = true;
+  return clientLoader;
 };
 
 export function useCachedLoaderData<T>(

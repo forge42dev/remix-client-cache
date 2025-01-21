@@ -244,6 +244,20 @@ clientLoader.hydrate = true;
 
 ```
 
+### createClientLoaderCache
+
+Creates everything needed to cache the data via clientLoader, behind the scenes creates the clientLoader object with the correct hydrate flag and the adapter.
+
+```tsx
+import { createClientLoaderCache, cacheClientLoader } from "remix-client-cache";
+
+export const clientLoader = createClientLoaderCache(); 
+
+// above is equivalent to:
+export const clientLoader = (args: ClientLoaderFunctionArgs) => cacheClientLoader(args);
+clientLoader.hydrate = true;
+```
+
 ### decacheClientLoader
 
 Used to remove the data that is piped from the loader to your component using the `clientLoader` export. 
